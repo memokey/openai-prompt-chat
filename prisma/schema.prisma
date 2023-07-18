@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  key       String?
+  chats     Chat[]
+  prompts   Prompt[]
+  library   Library?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+  name        String
+  messages    Json[]
+  user        User     @relation(fields: [userAddress], references: [name], onDelete: Cascade)
+  userAddress String   @map(name: "user_address")
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+}
+
+model Prompt {
+  id          String   @id @default(uuid())
+  name        String
+  text        String
+  user        User     @relation(fields: [userAddress], references: [name], onDelete: Cascade)
+  userAddress String   @map(name: "user_address")
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+}
+
+model Library {
+  id          String         @id @default(uuid())
+  user        User           @relation(fields: [userAddress], references: [name], onDelete: Cascade)
+  userAddress String         @unique @map(name: "user_address")
+  prompts     MarketPrompt[]
+}
+
+model MarketPrompt {
+  id          Int       @id @default(autoincrement())
+  address     String    @unique
+  name        String
+  description String
+  price       Float
+  url         String
+  creator     String
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  tags        Tag[]
+  libraries   Library[]
+}
+
+model Tag {
+  id      Int            @id @default(autoincrement())
+  name    String
+  prompts MarketPrompt[]
+}
