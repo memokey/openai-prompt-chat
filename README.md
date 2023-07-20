@@ -1,4 +1,4 @@
-# Mindgem
+# Prompt Chatbot
 
 ## 📝 Requirements
 
